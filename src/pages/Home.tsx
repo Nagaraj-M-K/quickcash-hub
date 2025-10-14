@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { AppCard } from "@/components/AppCard";
 import { FomoTimer } from "@/components/FomoTimer";
 import { SocialProof } from "@/components/SocialProof";
+import { SignupPromptModal } from "@/components/SignupPromptModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, Sparkles, Award } from "lucide-react";
+import { Search, Sparkles, Award, Lock } from "lucide-react";
 import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -16,18 +18,20 @@ export default function Home() {
   const [apps, setApps] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showSignupModal, setShowSignupModal] = useState(false);
 
   useEffect(() => {
     loadFeaturedApps();
-  }, []);
+  }, [user]);
 
   const loadFeaturedApps = async () => {
+    const limit = user ? 7 : 3; // Show only 3 apps for non-logged users
     const { data, error } = await supabase
       .from("apps")
       .select("*")
       .eq("is_featured", true)
       .order("sort_order")
-      .limit(7);
+      .limit(limit);
 
     if (error) {
       console.error("Error loading apps:", error);
@@ -122,23 +126,83 @@ export default function Home() {
 
         {/* Featured Apps */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <h3 className="text-2xl font-bold">⚡ Quick Money Apps</h3>
-            <span className="text-sm text-muted-foreground">(Instant Payouts)</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h3 className="text-2xl font-bold">⚡ Quick Money Apps</h3>
+              <span className="text-sm text-muted-foreground">(Instant Payouts)</span>
+            </div>
+            {!user && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowSignupModal(true)}
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  <Lock className="mr-2 h-4 w-4" />
+                  Unlock 30+ Apps
+                </Button>
+              </motion.div>
+            )}
           </div>
           
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+              {[1, 2, 3].map((i) => (
                 <div key={i} className="h-64 bg-muted animate-pulse rounded-lg" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredApps.map((app) => (
-                <AppCard key={app.id} {...app} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredApps.map((app) => (
+                  <AppCard key={app.id} {...app} />
+                ))}
+              </div>
+
+              {/* Locked Apps Preview for Non-Logged Users */}
+              {!user && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <Card className="relative overflow-hidden border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
+                    <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10" />
+                    <div className="relative z-20 p-8 text-center space-y-4">
+                      <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                        <Lock className="h-8 w-8 text-primary animate-pulse" />
+                      </div>
+                      <h4 className="text-2xl font-bold">27+ More Apps Locked 🔒</h4>
+                      <p className="text-muted-foreground max-w-md mx-auto">
+                        Sign up FREE to unlock Gaming, Shopping, Finance apps and earn up to ₹10,000/month!
+                      </p>
+                      <div className="flex gap-4 justify-center pt-4">
+                        <Button 
+                          size="lg"
+                          onClick={() => navigate("/auth")}
+                          className="bg-primary hover:bg-primary-glow"
+                        >
+                          <Sparkles className="mr-2 h-5 w-5" />
+                          Sign Up FREE
+                        </Button>
+                        <Button 
+                          size="lg"
+                          variant="outline"
+                          onClick={() => setShowSignupModal(true)}
+                        >
+                          Learn More
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              )}
+            </>
           )}
         </div>
       </section>
@@ -154,6 +218,14 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Signup Prompt Modal */}
+      {showSignupModal && (
+        <SignupPromptModal
+          trigger="limited_apps"
+          onClose={() => setShowSignupModal(false)}
+        />
+      )}
     </div>
   );
 }

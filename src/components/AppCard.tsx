@@ -66,10 +66,11 @@ export const AppCard = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ duration: 0.2 }}
+      whileHover={{ scale: 1.03, y: -6 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <Card className="relative overflow-hidden shadow-card hover:shadow-glow transition-all">
+      <Card className="relative overflow-hidden shadow-card hover:shadow-glow transition-all duration-300 cursor-pointer border-2 hover:border-primary/30">
         {isFeatured && (
           <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
             HOT DEAL
