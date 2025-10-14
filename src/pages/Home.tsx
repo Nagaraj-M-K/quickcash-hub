@@ -6,9 +6,10 @@ import { AppCard } from "@/components/AppCard";
 import { FomoTimer } from "@/components/FomoTimer";
 import { SocialProof } from "@/components/SocialProof";
 import { SignupPromptModal } from "@/components/SignupPromptModal";
+import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, Sparkles, Award, Lock } from "lucide-react";
+import { Search, Sparkles, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 
@@ -47,33 +48,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">EarnMore</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            {user ? (
-              <>
-                <Button variant="ghost" onClick={() => navigate("/dashboard")}>
-                  <Award className="mr-2 h-4 w-4" />
-                  Dashboard
-                </Button>
-                <Button onClick={() => navigate("/categories")}>Browse All</Button>
-              </>
-            ) : (
-              <>
-                <Button variant="ghost" onClick={() => navigate("/auth")}>
-                  Sign In
-                </Button>
-                <Button onClick={() => navigate("/auth")}>Get Started</Button>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12">

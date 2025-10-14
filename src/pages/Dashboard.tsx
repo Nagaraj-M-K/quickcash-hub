@@ -1,99 +1,244 @@
-import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AchievementBadge } from "@/components/AchievementBadge";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Award, Wallet } from "lucide-react";
+import { Navigation } from "@/components/Navigation";
+import { TrendingUp, Clock, Award } from "lucide-react";
+import { motion } from "framer-motion";
 
-export default function Dashboard() {
+const Dashboard = () => {
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [achievements, setAchievements] = useState<any[]>([]);
-  const [userAchievements, setUserAchievements] = useState<Set<string>>(new Set());
+  const [userAchievements, setUserAchievements] = useState<any[]>([]);
+  const [recentClicks, setRecentClicks] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate("/auth");
-      return;
     }
-    loadDashboardData();
+  }, [user, loading, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      fetchDashboardData();
+    }
   }, [user]);
 
-  const loadDashboardData = async () => {
-    const [profileRes, achievementsRes, userAchievementsRes] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", user!.id).single(),
-      supabase.from("achievements").select("*").order("threshold"),
-      supabase.from("user_achievements").select("achievement_id").eq("user_id", user!.id)
-    ]);
+  const fetchDashboardData = async () => {
+    if (!user) return;
 
-    if (profileRes.data) setProfile(profileRes.data);
-    if (achievementsRes.data) setAchievements(achievementsRes.data);
-    if (userAchievementsRes.data) {
-      setUserAchievements(new Set(userAchievementsRes.data.map(ua => ua.achievement_id)));
-    }
+    // Fetch profile
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+    
+    setProfile(profileData);
+
+    // Fetch achievements
+    const { data: achievementsData } = await supabase
+      .from("achievements")
+      .select("*")
+      .order("threshold", { ascending: true });
+    
+    setAchievements(achievementsData || []);
+
+    // Fetch user achievements
+    const { data: userAchievementsData } = await supabase
+      .from("user_achievements")
+      .select("*, achievements(*)")
+      .eq("user_id", user.id);
+    
+    setUserAchievements(userAchievementsData || []);
+
+    // Fetch recent clicks
+    const { data: clicksData } = await supabase
+      .from("clicks")
+      .select("*, apps(*)")
+      .eq("user_id", user.id)
+      .order("clicked_at", { ascending: false })
+      .limit(5);
+    
+    setRecentClicks(clicksData || []);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="text-4xl"
+        >
+          💰
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const unlockedAchievementIds = new Set(userAchievements.map(ua => ua.achievement_id));
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate("/")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Home
-          </Button>
-          <Button variant="ghost" onClick={signOut}>Sign Out</Button>
-        </div>
-      </header>
-
+      <Navigation />
+      
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">My Dashboard</h1>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
+            Welcome back, {profile?.full_name || "Earner"}! 👋
+          </h1>
+          <p className="text-muted-foreground mb-8">Track your earnings and achievements</p>
+        </motion.div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  Total Clicks
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">{profile?.total_clicks || 0}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="bg-gradient-to-br from-accent/10 to-accent/5 border-accent/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-accent" />
+                  Pending Earnings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">₹{profile?.pending_earnings || 0}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card className="bg-gradient-to-br from-gaming/10 to-gaming/5 border-gaming/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Award className="h-5 w-5 text-gaming" />
+                  Total Earnings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold text-gaming">₹{profile?.total_earnings || 0}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
 
-        <Tabs defaultValue="achievements" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="achievements">
-              <Award className="mr-2 h-4 w-4" />
-              Achievements
-            </TabsTrigger>
-            <TabsTrigger value="rewards">
-              <Wallet className="mr-2 h-4 w-4" />
-              Rewards
-            </TabsTrigger>
-          </TabsList>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl">Your Achievements 🏆</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {achievements.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {achievements.map((achievement, index) => (
+                    <motion.div
+                      key={achievement.id}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                    >
+                      <AchievementBadge
+                        name={achievement.name}
+                        description={achievement.description}
+                        currentProgress={
+                          achievement.name.includes("Click")
+                            ? profile?.total_clicks || 0
+                            : profile?.total_earnings || 0
+                        }
+                        threshold={achievement.threshold}
+                        icon={achievement.icon}
+                        unlocked={unlockedAchievementIds.has(achievement.id)}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No achievements yet. Start clicking to earn!</p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
 
-          <TabsContent value="achievements" className="space-y-6 mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {achievements.map((achievement) => (
-                <AchievementBadge
-                  key={achievement.id}
-                  {...achievement}
-                  currentProgress={profile?.total_clicks || 0}
-                  unlocked={userAchievements.has(achievement.id)}
-                />
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="rewards" className="space-y-6 mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-primary/10 p-6 rounded-lg">
-                <h3 className="text-sm text-muted-foreground">Total Earnings</h3>
-                <p className="text-3xl font-bold text-primary">₹{profile?.total_earnings || 0}</p>
-              </div>
-              <div className="bg-accent/10 p-6 rounded-lg">
-                <h3 className="text-sm text-muted-foreground">Pending</h3>
-                <p className="text-3xl font-bold text-accent">₹{profile?.pending_earnings || 0}</p>
-              </div>
-              <div className="bg-secondary/10 p-6 rounded-lg">
-                <h3 className="text-sm text-muted-foreground">Total Clicks</h3>
-                <p className="text-3xl font-bold text-secondary">{profile?.total_clicks || 0}</p>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Recent Activity 📊</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recentClicks.length > 0 ? (
+                <div className="space-y-4">
+                  {recentClicks.map((click) => (
+                    <div
+                      key={click.id}
+                      className="flex items-center justify-between p-4 rounded-lg bg-muted/50"
+                    >
+                      <div>
+                        <p className="font-semibold">{click.apps?.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(click.clicked_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-primary">₹{click.apps?.bonus_amount}</p>
+                        <p className="text-xs text-muted-foreground">{click.status}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No recent activity. Start clicking referrals to see your progress!</p>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

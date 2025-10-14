@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AppCard } from "@/components/AppCard";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { SignupPromptModal } from "@/components/SignupPromptModal";
+import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Search, Lock } from "lucide-react";
+import { Search, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 
 export default function Categories() {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [apps, setApps] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,16 +47,7 @@ export default function Categories() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate("/")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Button>
-          <h1 className="text-xl font-bold">Browse All Apps</h1>
-          <div className="w-24" /> {/* Spacer */}
-        </div>
-      </header>
+      <Navigation />
 
       <div className="container mx-auto px-4 py-8">
         {/* Search */}
@@ -111,7 +101,7 @@ export default function Categories() {
                         </p>
                         <div className="flex gap-3 justify-center pt-2">
                           <Button 
-                            onClick={() => navigate("/auth")}
+                            onClick={() => window.location.href = "/auth"}
                             className="bg-primary hover:bg-primary-glow"
                           >
                             Sign Up FREE
