@@ -51,6 +51,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean | null
+          my_commission_rate: number | null
           name: string
           payout_time: string
           referral_link: string
@@ -66,6 +67,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          my_commission_rate?: number | null
           name: string
           payout_time: string
           referral_link: string
@@ -81,6 +83,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          my_commission_rate?: number | null
           name?: string
           payout_time?: string
           referral_link?: string
@@ -129,11 +132,13 @@ export type Database = {
         Row: {
           anonymous_id: string | null
           app_id: string
+          app_name: string | null
           clicked_at: string | null
           commission_amount: number | null
           confirmed_at: string | null
           id: string
           ip_address: string | null
+          is_my_referral: boolean | null
           status: string | null
           user_id: string | null
           utm_campaign: string | null
@@ -143,11 +148,13 @@ export type Database = {
         Insert: {
           anonymous_id?: string | null
           app_id: string
+          app_name?: string | null
           clicked_at?: string | null
           commission_amount?: number | null
           confirmed_at?: string | null
           id?: string
           ip_address?: string | null
+          is_my_referral?: boolean | null
           status?: string | null
           user_id?: string | null
           utm_campaign?: string | null
@@ -157,11 +164,13 @@ export type Database = {
         Update: {
           anonymous_id?: string | null
           app_id?: string
+          app_name?: string | null
           clicked_at?: string | null
           commission_amount?: number | null
           confirmed_at?: string | null
           id?: string
           ip_address?: string | null
+          is_my_referral?: boolean | null
           status?: string | null
           user_id?: string | null
           utm_campaign?: string | null
@@ -187,6 +196,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          confirmed_earnings: number | null
           created_at: string | null
           email: string | null
           full_name: string | null
@@ -194,8 +204,10 @@ export type Database = {
           pending_earnings: number | null
           total_clicks: number | null
           total_earnings: number | null
+          upi_id: string | null
         }
         Insert: {
+          confirmed_earnings?: number | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -203,8 +215,10 @@ export type Database = {
           pending_earnings?: number | null
           total_clicks?: number | null
           total_earnings?: number | null
+          upi_id?: string | null
         }
         Update: {
+          confirmed_earnings?: number | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -212,6 +226,7 @@ export type Database = {
           pending_earnings?: number | null
           total_clicks?: number | null
           total_earnings?: number | null
+          upi_id?: string | null
         }
         Relationships: []
       }
