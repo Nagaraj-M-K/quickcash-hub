@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AchievementBadge } from "@/components/AchievementBadge";
 import { supabase } from "@/integrations/supabase/client";
-import { Navigation } from "@/components/Navigation";
+import Navigation from "@/components/Navigation";
 import { TrendingUp, Clock, Award } from "lucide-react";
 import { motion } from "framer-motion";
 

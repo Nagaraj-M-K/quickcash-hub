@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Navigation } from "@/components/Navigation";
+import Navigation from "@/components/Navigation";
 import { motion } from "framer-motion";
 import { Home, Search } from "lucide-react";
 

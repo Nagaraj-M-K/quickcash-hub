@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { AppCard } from "@/components/AppCard";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { SignupPromptModal } from "@/components/SignupPromptModal";
-import { Navigation } from "@/components/Navigation";
+import Navigation from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Search, Lock } from "lucide-react";

@@ -6,7 +6,7 @@ import { AppCard } from "@/components/AppCard";
 import { FomoTimer } from "@/components/FomoTimer";
 import { SocialProof } from "@/components/SocialProof";
 import { SignupPromptModal } from "@/components/SignupPromptModal";
-import { Navigation } from "@/components/Navigation";
+import Navigation from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Search, Sparkles, Lock } from "lucide-react";
