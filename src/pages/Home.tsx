@@ -6,10 +6,11 @@ import { AppCard } from "@/components/AppCard";
 import { FomoTimer } from "@/components/FomoTimer";
 import { SocialProof } from "@/components/SocialProof";
 import { SignupPromptModal } from "@/components/SignupPromptModal";
-import Navigation from "@/components/Navigation";
+import { TopNav } from "@/components/TopNav";
+import { BottomNav } from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, Sparkles, Lock } from "lucide-react";
+import { Search, Sparkles, Lock, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 
@@ -47,8 +48,8 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <TopNav />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12">
