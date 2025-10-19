@@ -16,6 +16,7 @@ interface AppCardProps {
   payoutTime: string;
   taskDescription: string;
   referralLink: string;
+  myReferralLink?: string;
   isFeatured?: boolean;
 }
 
@@ -28,6 +29,7 @@ export const AppCard = ({
   payoutTime,
   taskDescription,
   referralLink,
+  myReferralLink,
   isFeatured,
 }: AppCardProps) => {
   const { user } = useAuth();
@@ -44,16 +46,21 @@ export const AppCard = ({
 
   const handleClick = async () => {
     const utmParams = getUtmParams();
-    await trackClick(id, user?.id || null, utmParams);
+    const isMyReferral = !!myReferralLink;
+    const linkToUse = myReferralLink || referralLink;
+    
+    await trackClick(id, user?.id || null, utmParams, isMyReferral);
     
     toast.success("Opening referral link!", {
       description: user 
-        ? "Your click is being tracked for rewards" 
+        ? isMyReferral 
+          ? "Tracked with premium commission (50%)" 
+          : "Tracked with standard commission (30%)"
         : "Sign in to track your rewards",
     });
 
     // Add UTM params to referral link
-    const url = new URL(referralLink);
+    const url = new URL(linkToUse);
     Object.entries(utmParams).forEach(([key, value]) => {
       if (value) url.searchParams.set(key, value);
     });

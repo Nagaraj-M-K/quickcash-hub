@@ -18,7 +18,8 @@ export const getAnonymousId = (): string => {
 export const trackClick = async (
   appId: string,
   userId: string | null,
-  utmParams: Record<string, string> = {}
+  utmParams: Record<string, string> = {},
+  isMyReferral: boolean = false
 ) => {
   try {
     const anonymousId = userId ? null : getAnonymousId();
@@ -30,6 +31,7 @@ export const trackClick = async (
       utm_source: utmParams.utm_source || "organic",
       utm_medium: utmParams.utm_medium || "web",
       utm_campaign: utmParams.utm_campaign || "referral",
+      is_my_referral: isMyReferral,
     });
 
     if (error) {

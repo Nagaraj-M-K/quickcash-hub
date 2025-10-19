@@ -135,7 +135,18 @@ export default function Home() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredApps.map((app) => (
-                  <AppCard key={app.id} {...app} />
+                  <AppCard 
+                    key={app.id}
+                    id={app.id}
+                    name={app.name}
+                    category={app.category}
+                    description={app.description}
+                    bonusAmount={app.bonus_amount}
+                    payoutTime={app.payout_time}
+                    taskDescription={app.task_description}
+                    referralLink={app.referral_link}
+                    isFeatured={app.is_featured}
+                  />
                 ))}
               </div>
 
