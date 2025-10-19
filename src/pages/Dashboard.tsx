@@ -2,11 +2,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { AchievementBadge } from "@/components/AchievementBadge";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
-import { TrendingUp, Clock, Award } from "lucide-react";
+import { TrendingUp, Clock, Award, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -15,6 +19,8 @@ const Dashboard = () => {
   const [achievements, setAchievements] = useState<any[]>([]);
   const [userAchievements, setUserAchievements] = useState<any[]>([]);
   const [recentClicks, setRecentClicks] = useState<any[]>([]);
+  const [upiId, setUpiId] = useState("");
+  const [updatingUpi, setUpdatingUpi] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -39,6 +45,7 @@ const Dashboard = () => {
       .single();
     
     setProfile(profileData);
+    setUpiId(profileData?.upi_id || "");
 
     // Fetch achievements
     const { data: achievementsData } = await supabase
@@ -65,6 +72,30 @@ const Dashboard = () => {
       .limit(5);
     
     setRecentClicks(clicksData || []);
+  };
+
+  const handleUpdateUpi = async () => {
+    if (!upiId.trim()) {
+      toast.error("Please enter a valid UPI ID");
+      return;
+    }
+
+    setUpdatingUpi(true);
+    try {
+      const { error } = await supabase.functions.invoke('update-upi', {
+        body: { upiId }
+      });
+
+      if (error) throw error;
+
+      toast.success("UPI ID updated successfully!");
+      await fetchDashboardData();
+    } catch (error: any) {
+      console.error("Error updating UPI:", error);
+      toast.error(error.message || "Failed to update UPI ID");
+    } finally {
+      setUpdatingUpi(false);
+    }
   };
 
   if (loading) {
@@ -158,6 +189,51 @@ const Dashboard = () => {
             </Card>
           </motion.div>
         </div>
+
+        {/* UPI ID Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+        >
+          <Card className="mb-8 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-primary" />
+                UPI Details for Payouts
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Add your UPI ID to receive instant payouts (Min ₹100)
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="upi">UPI ID</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="upi"
+                    placeholder="yourname@upi"
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={handleUpdateUpi} 
+                    disabled={updatingUpi || !upiId.trim()}
+                    className="bg-primary hover:bg-primary-glow"
+                  >
+                    {updatingUpi ? "Saving..." : "Save UPI"}
+                  </Button>
+                </div>
+                {profile?.upi_id && (
+                  <p className="text-sm text-muted-foreground">
+                    Current UPI: <span className="font-semibold">{profile.upi_id}</span>
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

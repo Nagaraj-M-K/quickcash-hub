@@ -7,6 +7,7 @@ import { AddAppForm } from "@/components/admin/AddAppForm";
 import { AddBlogForm } from "@/components/admin/AddBlogForm";
 import { ManageApps } from "@/components/admin/ManageApps";
 import { ManageBlogs } from "@/components/admin/ManageBlogs";
+import { ManageClicks } from "@/components/admin/ManageClicks";
 import { Loader2 } from "lucide-react";
 
 const Admin = () => {
@@ -35,17 +36,22 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container mx-auto px-4 py-6 md:py-8">
-        <h1 className="text-2xl md:text-4xl font-bold mb-6 md:mb-8 text-center">
+        <h1 className="text-2xl md:text-4xl font-bold mb-6 md:mb-8 text-center bg-gradient-primary bg-clip-text text-transparent">
           Admin Dashboard
         </h1>
         
-        <Tabs defaultValue="apps" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
-            <TabsTrigger value="apps">Add App</TabsTrigger>
-            <TabsTrigger value="blogs">Add Blog</TabsTrigger>
-            <TabsTrigger value="manage-apps">Manage Apps</TabsTrigger>
-            <TabsTrigger value="manage-blogs">Manage Blogs</TabsTrigger>
+        <Tabs defaultValue="clicks" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 mb-6 gap-1">
+            <TabsTrigger value="clicks" className="text-xs md:text-sm">Track Clicks</TabsTrigger>
+            <TabsTrigger value="apps" className="text-xs md:text-sm">Add App</TabsTrigger>
+            <TabsTrigger value="blogs" className="text-xs md:text-sm">Add Blog</TabsTrigger>
+            <TabsTrigger value="manage-apps" className="text-xs md:text-sm">Manage Apps</TabsTrigger>
+            <TabsTrigger value="manage-blogs" className="text-xs md:text-sm">Manage Blogs</TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="clicks">
+            <ManageClicks />
+          </TabsContent>
           
           <TabsContent value="apps">
             <AddAppForm />
