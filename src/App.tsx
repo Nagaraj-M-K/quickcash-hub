@@ -9,9 +9,10 @@ import Categories from "./pages/Categories";
 import Quiz from "./pages/Quiz";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/DashboardWithTabs";
 import Admin from "./pages/Admin";
 import SubmitReferral from "./pages/SubmitReferral";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/submit-referral" element={<SubmitReferral />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

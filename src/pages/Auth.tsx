@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
@@ -13,8 +15,13 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [consent, setConsent] = useState(false);
 
   const handleGoogleSignIn = async () => {
+    if (!consent) {
+      toast.error("Please agree to tracking consent");
+      return;
+    }
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -32,6 +39,12 @@ export default function Auth() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isLogin && !consent) {
+      toast.error("Please agree to tracking consent");
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -39,7 +52,7 @@ export default function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
-        navigate("/");
+        navigate("/dashboard");
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -82,7 +95,24 @@ export default function Auth() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Button type="submit" className="w-full" disabled={loading}>
+            
+            {!isLogin && (
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="consent" 
+                  checked={consent}
+                  onCheckedChange={(checked) => setConsent(checked as boolean)}
+                />
+                <Label 
+                  htmlFor="consent" 
+                  className="text-sm text-muted-foreground cursor-pointer"
+                >
+                  I agree to tracking for RBI/GDPR compliance
+                </Label>
+              </div>
+            )}
+            
+            <Button type="submit" className="w-full min-h-[44px]" disabled={loading}>
               {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
             </Button>
             
@@ -100,7 +130,7 @@ export default function Auth() {
             <Button
               type="button"
               variant="outline"
-              className="w-full"
+              className="w-full min-h-[44px]"
               onClick={handleGoogleSignIn}
               disabled={loading}
             >

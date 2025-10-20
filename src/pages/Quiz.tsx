@@ -11,30 +11,27 @@ import { motion, AnimatePresence } from "framer-motion";
 const questions = [
   {
     id: 1,
-    question: "What's your main goal?",
+    question: "Fast cash or games?",
     options: [
-      { value: "fast-cash", label: "Get money fast (under 24h)", category: "payments" },
-      { value: "fun-games", label: "Have fun while earning", category: "gaming" },
-      { value: "shopping", label: "Save on shopping", category: "shopping" },
-      { value: "services", label: "Daily services discounts", category: "other" },
+      { value: "fast-cash", label: "Fast cash (under 24h)", category: "payments" },
+      { value: "games", label: "Games & fun", category: "gaming" },
     ],
   },
   {
     id: 2,
-    question: "How much time can you spend?",
+    question: "Students/Homemakers?",
     options: [
-      { value: "5-mins", label: "Just 5 minutes", minPayout: "Instant" },
-      { value: "30-mins", label: "Around 30 minutes", minPayout: "2 hours" },
-      { value: "flexible", label: "I'm flexible", minPayout: "any" },
+      { value: "student", label: "Student", category: "payments" },
+      { value: "homemaker", label: "Homemaker", category: "other" },
+      { value: "working", label: "Working professional", category: "gaming" },
     ],
   },
   {
     id: 3,
-    question: "Minimum payout you want?",
+    question: "UPI or gaming?",
     options: [
-      { value: "any", label: "Any amount works", minBonus: 0 },
-      { value: "100", label: "At least ₹100", minBonus: 100 },
-      { value: "500", label: "₹500 or more", minBonus: 500 },
+      { value: "upi", label: "UPI payments", category: "payments" },
+      { value: "gaming", label: "Gaming/Fantasy", category: "gaming" },
     ],
   },
 ];
