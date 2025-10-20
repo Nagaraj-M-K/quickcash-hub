@@ -230,6 +230,42 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_submissions: {
+        Row: {
+          app_name: string
+          bonus_amount: number
+          category: string
+          created_at: string
+          description: string
+          id: string
+          referral_link: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          app_name: string
+          bonus_amount: number
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          referral_link: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          app_name?: string
+          bonus_amount?: number
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          referral_link?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_achievements: {
         Row: {
           achievement_id: string
