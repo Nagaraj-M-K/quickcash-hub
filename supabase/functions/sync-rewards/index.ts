@@ -65,10 +65,43 @@ Deno.serve(async (req) => {
 
     console.log(`Click ${clickId} updated to ${status}`)
 
+    let payoutId = null
+
+    // If confirmed, check if payout threshold is met (₹100+)
+    if (status === 'confirmed' && updatedClick.user_id) {
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('confirmed_earnings, upi_id')
+        .eq('id', updatedClick.user_id)
+        .single()
+
+      if (profile && profile.confirmed_earnings >= 100 && profile.upi_id) {
+        console.log(`User ${updatedClick.user_id} eligible for payout: ₹${profile.confirmed_earnings}`)
+        
+        // Create payout record
+        const { data: payout, error: payoutError } = await supabaseClient
+          .from('payouts')
+          .insert({
+            user_id: updatedClick.user_id,
+            amount: profile.confirmed_earnings,
+            upi_id: profile.upi_id,
+            status: 'pending'
+          })
+          .select()
+          .single()
+
+        if (!payoutError && payout) {
+          payoutId = payout.id
+          console.log(`Payout created: ${payoutId} for ₹${profile.confirmed_earnings}`)
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         message: `Click status updated to ${status}`,
-        click: updatedClick
+        click: updatedClick,
+        payoutId
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

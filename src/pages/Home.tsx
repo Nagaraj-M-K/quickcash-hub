@@ -27,7 +27,7 @@ export default function Home() {
   }, [user]);
 
   const loadFeaturedApps = async () => {
-    const limit = user ? 7 : 3; // Show only 3 apps for non-logged users
+    const limit = user ? 7 : 5; // Show 5 apps for non-logged users, 7 for logged in
     const { data, error } = await supabase
       .from("apps")
       .select("*")
@@ -58,20 +58,35 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-6 mb-12"
         >
-          <h2 className="text-4xl md:text-6xl font-bold">
-            Earn Quick Money with
-            <span className="text-primary"> India's Top Apps</span>
-          </h2>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold">
+            QuickEarn - Best Refer and Earn Apps India 2025 | Instant ₹100+ Payouts
+          </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Get instant payouts from ₹50 to ₹1,000 in minutes. No tricks, just easy money!
+            India's fastest referral platform. No waiting, no hassle.
           </p>
           
-          <div className="flex gap-4 justify-center">
-            <Button size="lg" onClick={() => navigate("/quiz")} className="bg-primary hover:bg-primary-glow">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto my-8">
+            <Card className="p-4">
+              <div className="text-3xl font-bold text-primary">₹100+</div>
+              <div className="text-sm text-muted-foreground">Earnings</div>
+            </Card>
+            <Card className="p-4">
+              <div className="text-3xl font-bold text-primary">&lt;5 min</div>
+              <div className="text-sm text-muted-foreground">Payouts</div>
+            </Card>
+            <Card className="p-4">
+              <div className="text-3xl font-bold text-primary">50K+</div>
+              <div className="text-sm text-muted-foreground">Users</div>
+            </Card>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" onClick={() => navigate("/quiz")} className="bg-primary hover:bg-primary-glow min-h-[44px]">
               <Sparkles className="mr-2 h-5 w-5" />
               Take Quick Quiz
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/categories")}>
+            <Button size="lg" variant="outline" onClick={() => navigate("/categories")} className="min-h-[44px]">
               Browse All Apps
             </Button>
           </div>
@@ -79,7 +94,7 @@ export default function Home() {
 
         {/* FOMO Timer */}
         <div className="max-w-xl mx-auto mb-12">
-          <FomoTimer message="🔥 Special offer ends in" />
+          <FomoTimer message="🔥 CRED ₹1,000 ends in" />
         </div>
 
         {/* Social Proof */}
