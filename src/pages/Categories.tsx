@@ -63,8 +63,9 @@ export default function Categories() {
           </div>
         </div>
 
-        {/* Category Tabs */}
-        <CategoryTabs>
+        {/* Category Tabs - Sticky Navigation */}
+        <div className="sticky top-0 z-10 bg-background pb-4">
+          <CategoryTabs>
           {(category) => {
             const categoryApps = filterAppsByCategory(category);
             const allCategoryApps = apps.filter((app) => app.category === category);
@@ -120,7 +121,8 @@ export default function Categories() {
               </div>
             );
           }}
-        </CategoryTabs>
+          </CategoryTabs>
+        </div>
       </div>
 
       {/* Signup Prompt Modal */}
