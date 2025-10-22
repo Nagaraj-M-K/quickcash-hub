@@ -8,6 +8,17 @@ import { toast } from "sonner";
 import { CheckCircle, XCircle, Clock, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 
+// Mask email for privacy (u***@example.com)
+const maskEmail = (email: string | null | undefined): string => {
+  if (!email) return "Anonymous";
+  const [username, domain] = email.split("@");
+  if (!domain) return email;
+  const maskedUsername = username.length > 1 
+    ? username.charAt(0) + "***" 
+    : username;
+  return `${maskedUsername}@${domain}`;
+};
+
 export const ManageClicks = () => {
   const [clicks, setClicks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,7 +146,7 @@ export const ManageClicks = () => {
                             )}
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            User: {click.profiles?.email || click.anonymous_id || "Anonymous"}
+                            User: {maskEmail(click.profiles?.email) || click.anonymous_id || "Anonymous"}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {new Date(click.clicked_at).toLocaleString()}

@@ -1,6 +1,26 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0'
 import { corsHeaders } from '../_shared/cors.ts'
 
+// Rate limiting storage (in-memory, resets on cold start)
+const rateLimiter = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(userId: string, maxRequests: number, windowMs: number): boolean {
+  const now = Date.now();
+  const userLimit = rateLimiter.get(userId);
+  
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimiter.set(userId, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  
+  if (userLimit.count >= maxRequests) {
+    return false;
+  }
+  
+  userLimit.count++;
+  return true;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -23,6 +43,17 @@ Deno.serve(async (req) => {
     
     if (userError || !user) {
       throw new Error('Unauthorized')
+    }
+
+    // Rate limiting: 20 requests per minute per user
+    if (!checkRateLimit(user.id, 20, 60000)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 429
+        }
+      )
     }
 
     // Check if user is admin
