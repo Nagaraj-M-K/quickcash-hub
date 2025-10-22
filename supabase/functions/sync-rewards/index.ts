@@ -90,8 +90,23 @@ Deno.serve(async (req) => {
       .single()
 
     if (updateError) {
-      console.error('Error updating click:', updateError)
-      throw new Error(`Failed to update click: ${updateError.message}`)
+      const requestId = crypto.randomUUID();
+      console.error(`[${requestId}] Error updating click:`, {
+        message: updateError.message,
+        details: updateError.details,
+        hint: updateError.hint,
+        code: updateError.code
+      });
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to update click status. Please try again or contact support.',
+          reference: requestId
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500
+        }
+      );
     }
 
     console.log(`Click ${clickId} updated to ${status}`)

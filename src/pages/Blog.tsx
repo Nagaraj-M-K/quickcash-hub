@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import { Calendar, User } from "lucide-react";
+import DOMPurify from "dompurify";
 
 export default function Blog() {
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -98,7 +99,7 @@ export default function Blog() {
                     <p className="text-muted-foreground mb-4">{blog.excerpt}</p>
                     <div 
                       className="prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: blog.content }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
                     />
                   </CardContent>
                 </Card>
