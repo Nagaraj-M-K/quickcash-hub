@@ -9,6 +9,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { z } from "zod";
+
+const appSchema = z.object({
+  name: z.string().trim().min(1, "App name is required").max(100, "App name must be less than 100 characters"),
+  description: z.string().trim().min(10, "Description must be at least 10 characters").max(500, "Description must be less than 500 characters"),
+  category: z.enum(["payments", "gaming", "shopping", "other"], { errorMap: () => ({ message: "Please select a valid category" }) }),
+  bonusAmount: z.string().refine((val) => {
+    const num = parseInt(val);
+    return !isNaN(num) && num > 0 && num <= 100000;
+  }, "Bonus amount must be between 1 and 100,000"),
+  payoutTime: z.string().trim().min(1, "Payout time is required").max(100, "Payout time must be less than 100 characters"),
+  commissionRate: z.string().refine((val) => {
+    const num = parseFloat(val);
+    return !isNaN(num) && num >= 0 && num <= 1;
+  }, "Commission rate must be between 0 and 1 (0-100%)"),
+  sortOrder: z.string().refine((val) => {
+    const num = parseInt(val);
+    return !isNaN(num) && num >= 0;
+  }, "Sort order must be a non-negative number"),
+  taskDescription: z.string().trim().min(5, "Task description must be at least 5 characters").max(500, "Task description must be less than 500 characters"),
+  referralLink: z.string().url("Please enter a valid URL").max(500, "URL must be less than 500 characters"),
+  imageUrl: z.string().refine((val) => val === "" || z.string().url().safeParse(val).success, "Please enter a valid URL or leave empty").optional(),
+});
 
 export const AddAppForm = () => {
   const [loading, setLoading] = useState(false);
@@ -31,18 +54,21 @@ export const AddAppForm = () => {
     setLoading(true);
 
     try {
+      // Validate form data
+      const validated = appSchema.parse(formData);
+
       const { error } = await supabase.from("apps").insert([{
-        name: formData.name,
-        description: formData.description,
-        category: formData.category as "payments" | "gaming" | "shopping" | "other",
-        bonus_amount: parseInt(formData.bonusAmount),
-        payout_time: formData.payoutTime,
-        task_description: formData.taskDescription,
-        referral_link: formData.referralLink,
-        image_url: formData.imageUrl || null,
+        name: validated.name,
+        description: validated.description,
+        category: validated.category,
+        bonus_amount: parseInt(validated.bonusAmount),
+        payout_time: validated.payoutTime,
+        task_description: validated.taskDescription,
+        referral_link: validated.referralLink,
+        image_url: validated.imageUrl || null,
         is_featured: formData.isFeatured,
-        commission_rate: parseFloat(formData.commissionRate),
-        sort_order: parseInt(formData.sortOrder)
+        commission_rate: parseFloat(validated.commissionRate),
+        sort_order: parseInt(validated.sortOrder)
       }]);
 
       if (error) throw error;
@@ -62,6 +88,10 @@ export const AddAppForm = () => {
         sortOrder: "0"
       });
     } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+        return;
+      }
       toast.error(error.message || "Failed to add app");
     } finally {
       setLoading(false);

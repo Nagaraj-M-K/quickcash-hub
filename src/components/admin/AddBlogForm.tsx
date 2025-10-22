@@ -9,6 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { z } from "zod";
+
+const blogSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
+  content: z.string().trim().min(10, "Content must be at least 10 characters").max(50000, "Content must be less than 50,000 characters"),
+  excerpt: z.string().trim().max(500, "Excerpt must be less than 500 characters").optional(),
+  imageUrl: z.string().refine((val) => val === "" || z.string().url().safeParse(val).success, "Please enter a valid URL or leave empty").optional(),
+});
 
 export const AddBlogForm = () => {
   const { user } = useAuth();
@@ -26,11 +34,14 @@ export const AddBlogForm = () => {
     setLoading(true);
 
     try {
+      // Validate form data
+      const validated = blogSchema.parse(formData);
+
       const { error } = await supabase.from("blogs").insert({
-        title: formData.title,
-        content: formData.content,
-        excerpt: formData.excerpt || null,
-        image_url: formData.imageUrl || null,
+        title: validated.title,
+        content: validated.content,
+        excerpt: validated.excerpt || null,
+        image_url: validated.imageUrl || null,
         published: formData.published,
         author_id: user?.id
       });
@@ -46,6 +57,10 @@ export const AddBlogForm = () => {
         published: false
       });
     } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+        return;
+      }
       toast.error(error.message || "Failed to add blog post");
     } finally {
       setLoading(false);
