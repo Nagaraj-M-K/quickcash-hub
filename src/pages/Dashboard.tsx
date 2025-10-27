@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { AchievementBadge } from "@/components/AchievementBadge";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
+import { BottomNav } from "@/components/BottomNav";
 import { TrendingUp, Clock, Award, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -119,8 +120,9 @@ const Dashboard = () => {
   const unlockedAchievementIds = new Set(userAchievements.map(ua => ua.achievement_id));
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navigation />
+      <BottomNav />
       
       <div className="container mx-auto px-4 py-8">
         <motion.div

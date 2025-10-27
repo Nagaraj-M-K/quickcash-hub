@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserRole } from "@/hooks/useUserRole";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navigation from "@/components/Navigation";
+import { BottomNav } from "@/components/BottomNav";
 import { AddAppForm } from "@/components/admin/AddAppForm";
 import { AddBlogForm } from "@/components/admin/AddBlogForm";
 import { ManageApps } from "@/components/admin/ManageApps";
@@ -33,8 +34,9 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navigation />
+      <BottomNav />
       <main className="container mx-auto px-4 py-6 md:py-8">
         <h1 className="text-2xl md:text-4xl font-bold mb-6 md:mb-8 text-center bg-gradient-primary bg-clip-text text-transparent">
           Admin Dashboard

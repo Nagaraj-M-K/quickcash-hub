@@ -50,6 +50,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <TopNav />
+      <BottomNav />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12">
@@ -210,13 +211,13 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t mt-20">
+      <footer className="border-t mt-20 mb-safe">
         <div className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
-          <p>© 2025 EarnMore. Affiliate disclosure: We earn commissions from referrals.</p>
-          <div className="flex justify-center gap-4 mt-4">
-            <a href="#" className="hover:text-primary">Privacy Policy</a>
-            <a href="#" className="hover:text-primary">Terms</a>
-            <a href="#" className="hover:text-primary">Contact</a>
+          <p>© 2025 QuickCash. Affiliate disclosure: We earn commissions from referrals.</p>
+          <div className="flex flex-wrap justify-center gap-4 mt-4">
+            <a href="#" className="hover:text-primary min-h-[44px] flex items-center">Privacy Policy</a>
+            <a href="#" className="hover:text-primary min-h-[44px] flex items-center">Terms</a>
+            <a href="#" className="hover:text-primary min-h-[44px] flex items-center">Contact</a>
           </div>
         </div>
       </footer>

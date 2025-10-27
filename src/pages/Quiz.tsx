@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import Navigation from "@/components/Navigation";
+import { BottomNav } from "@/components/BottomNav";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -74,8 +75,9 @@ export default function Quiz() {
   if (showResults) {
     const category = getRecommendations();
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Navigation />
+        <BottomNav />
         <div className="flex items-center justify-center p-4 min-h-[80vh]">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -122,8 +124,9 @@ export default function Quiz() {
   const hasAnswer = answers[currentQuestion] !== undefined;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navigation />
+      <BottomNav />
       <div className="flex items-center justify-center p-4 min-h-[80vh]">
         <div className="max-w-2xl w-full">
           <Button

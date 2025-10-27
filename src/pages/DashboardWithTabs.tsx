@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AchievementBadge } from "@/components/AchievementBadge";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
+import { BottomNav } from "@/components/BottomNav";
 import { User, History, Gift, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -130,6 +131,7 @@ const DashboardWithTabs = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navigation />
+      <BottomNav />
       
       <div className="container mx-auto px-4 py-8">
         <motion.div

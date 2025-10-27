@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
+import { BottomNav } from "@/components/BottomNav";
 import { motion } from "framer-motion";
 import { Home, Search } from "lucide-react";
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navigation />
+      <BottomNav />
       <div className="container mx-auto px-4 flex flex-col items-center justify-center min-h-[80vh]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

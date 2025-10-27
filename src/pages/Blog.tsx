@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Navigation from "@/components/Navigation";
-import { supabase } from "@/integrations/supabase/client";
 import { Helmet } from "react-helmet";
+import Navigation from "@/components/Navigation";
+import { BottomNav } from "@/components/BottomNav";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Calendar, User } from "lucide-react";
 import DOMPurify from "dompurify";
@@ -32,7 +33,7 @@ export default function Blog() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Helmet>
         <title>Blog - QuickEarn | Latest Earning Tips & App Reviews</title>
         <meta 
@@ -42,6 +43,7 @@ export default function Blog() {
       </Helmet>
       
       <Navigation />
+      <BottomNav />
 
       <div className="container mx-auto px-4 py-12">
         <motion.div

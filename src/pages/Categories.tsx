@@ -5,6 +5,7 @@ import { AppCard } from "@/components/AppCard";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { SignupPromptModal } from "@/components/SignupPromptModal";
 import Navigation from "@/components/Navigation";
+import { BottomNav } from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Search, Lock } from "lucide-react";
@@ -46,8 +47,9 @@ export default function Categories() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Navigation />
+      <BottomNav />
 
       <div className="container mx-auto px-4 py-8">
         {/* Search */}
